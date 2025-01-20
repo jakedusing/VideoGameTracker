@@ -35,8 +35,12 @@ public class VideoGame {
         return isCompleted;
     }
 
-    public void setCompleted(boolean completed) {
-        isCompleted = completed;
+    public void setCompleted() {
+        isCompleted = true;
+    }
+
+    public void setIncomplete() {
+        isCompleted = false;
     }
 
     @Override

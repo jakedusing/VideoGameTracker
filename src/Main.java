@@ -1,5 +1,6 @@
 import tracker.VideoGame;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +18,11 @@ public class Main {
             System.out.println("2. View all video games");
             System.out.println("3. Filter games by console");
             System.out.println("4. Filter games by genre");
-            System.out.println("5. Exit");
+            System.out.println("5. Set a game as complete");
+            System.out.println("6. Set a game as incomplete");
+            System.out.println("7. Save Backlog to file");
+            System.out.println("8. Load Backlog from file");
+            System.out.println("9. Exit");
             System.out.println("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -28,7 +33,11 @@ public class Main {
                 case 2 -> viewAllGames(backlog);
                 case 3 -> filterByConsole(backlog, scanner);
                 case 4 -> filterByGenre(backlog, scanner);
-                case 5 -> {
+                case 5 -> setGameCompleted(backlog, scanner);
+                case 6 -> setGameIncomplete(backlog, scanner);
+                case 7 -> saveToFile(backlog, scanner);
+                case 8 -> loadFromFile(backlog, scanner);
+                case 9 -> {
                     System.out.println("Exiting.. Goodbye!");
                     return;
                 }
@@ -106,6 +115,87 @@ public class Main {
         }
         if (!found) {
             System.out.println("No games found for this genre");
+        }
+    }
+
+    // set game as complete
+    private static void setGameCompleted(List<VideoGame> backlog, Scanner scanner) {
+        System.out.println("Enter the game you would like to mark as completed: ");
+        String completedGame = scanner.nextLine();
+        boolean found = false;
+        for (VideoGame game : backlog) {
+            if (game.getTitle().equalsIgnoreCase(completedGame)) {
+                if (game.isCompleted()) {
+                    System.out.println("Game already completed.");
+                    return;
+                }
+                game.setCompleted();
+                System.out.println("Successfully marked " + completedGame + " as completed!");
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("Could not find the game with title " + completedGame);
+        }
+    }
+
+    // set game as incomplete
+    private static void setGameIncomplete(List<VideoGame> backlog, Scanner scanner) {
+        System.out.println("Enter the game you would like to mark as incomplete: ");
+        String inCompleteGame = scanner.nextLine();
+        boolean found = false;
+        for (VideoGame game : backlog) {
+            if (game.getTitle().equalsIgnoreCase(inCompleteGame)) {
+                if (!game.isCompleted()) {
+                    System.out.println("Game already set as not completed");
+                    return;
+                }
+                game.setIncomplete();
+                System.out.println("Successfully marked " + inCompleteGame + " as incomplete.");
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("Could not find game with title " + inCompleteGame);
+        }
+    }
+
+    // save to file
+    private static void saveToFile(List<VideoGame> backlog,Scanner scanner) {
+        System.out.println("Enter filename to save the backlog: ");
+        String filename = scanner.nextLine();
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            for (VideoGame game : backlog) {
+                writer.println(game.getTitle() + "," + game.getGenre() + "," + game.getReleaseYear() + "," + game.getConsole() + "," + game.isCompleted());
+            }
+            System.out.println("Backlog saved to file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error saving file: " + e.getMessage());
+        }
+    }
+
+    // read from file
+    private static void loadFromFile(List<VideoGame> backlog, Scanner scanner) {
+        System.out.println("Enter filename to load the backlog: ");
+        String filename = scanner.nextLine();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            backlog.clear();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 5) {
+                    String title = parts[0];
+                    String genre = parts[1];
+                    int releaseYear = Integer.parseInt(parts[2]);
+                    String console = parts[3];
+                    boolean completed = Boolean.parseBoolean(parts[4]);
+                    backlog.add(new VideoGame(title, genre, releaseYear, console, completed));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
         }
     }
 }
