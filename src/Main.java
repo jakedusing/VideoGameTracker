@@ -22,7 +22,8 @@ public class Main {
             System.out.println("6. Set a game as incomplete");
             System.out.println("7. Save Backlog to file");
             System.out.println("8. Load Backlog from file");
-            System.out.println("9. Exit");
+            System.out.println("9. Save filtered list of games");
+            System.out.println("10. Exit");
             System.out.println("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -37,7 +38,8 @@ public class Main {
                 case 6 -> setGameIncomplete(backlog, scanner);
                 case 7 -> saveToFile(backlog, scanner);
                 case 8 -> loadFromFile(backlog, scanner);
-                case 9 -> {
+                case 9 -> exportFilteredList(backlog, scanner);
+                case 10 -> {
                     System.out.println("Exiting.. Goodbye!");
                     return;
                 }
@@ -209,6 +211,77 @@ public class Main {
             System.out.println("Games successfully loaded from " + filename);
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    private static void exportFilteredList(List<VideoGame> backlog, Scanner scanner) {
+        if (backlog.isEmpty()) {
+            System.out.println("The backlog is empty. Nothing to filter.");
+            return;
+        }
+
+        System.out.println("Choose a filter to option:");
+        System.out.println("1. Filter by Console");
+        System.out.println("2. Filter by Genre");
+        int choice = scanner.nextInt();
+        scanner.nextLine();  // consume new line
+
+        List<VideoGame> filteredList = new ArrayList<>();
+        switch (choice) {
+            case 1 -> {
+                System.out.println("Enter the console to filter by: ");
+                String filteredConsole = scanner.nextLine();
+                for (VideoGame game : backlog) {
+                    if (game.getConsole().equalsIgnoreCase(filteredConsole)) {
+                        filteredList.add(game);
+                    }
+                }
+            }
+            case 2 -> {
+                System.out.println("Enter the genre to filter by: ");
+                String filteredGenre = scanner.nextLine();
+                for (VideoGame game : backlog) {
+                    if (game.getGenre().equalsIgnoreCase(filteredGenre)) {
+                        filteredList.add(game);
+                    }
+                }
+            }
+            default -> {
+                System.out.println("Invalid choice. Returning to menu.");
+                return;
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            System.out.println("No games matched the filter criteria.");
+            return;
+        }
+
+        System.out.println("Filtered list:");
+        for (VideoGame game : filteredList) {
+            System.out.println(game);
+        }
+
+        System.out.print("Would you like to export this filtered list to a file? (yes/no): ");
+        String exportChoice = scanner.nextLine().trim().toLowerCase();
+        if (exportChoice.equals("yes")) {
+            System.out.print("Enter filename to save the filtered list: ");
+            String filename = scanner.nextLine();
+            if (!filename.endsWith(".txt")) {
+                filename += ".txt";
+            }
+
+            try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+                for (VideoGame game : filteredList) {
+                    writer.println(game.getTitle() + "," + game.getGenre() + ","
+                    + game.getReleaseYear() + "," + game.getConsole() + "," + game.isCompleted());
+                }
+                System.out.println("Filtered list saved to file: " + filename);
+            } catch (IOException e) {
+                System.out.println("Error saving file: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Filtered list was not exported.");
         }
     }
 }
