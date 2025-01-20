@@ -164,6 +164,9 @@ public class Main {
     private static void saveToFile(List<VideoGame> backlog,Scanner scanner) {
         System.out.println("Enter filename to save the backlog: ");
         String filename = scanner.nextLine();
+        if (!filename.endsWith(".txt")) {
+            filename += ".txt"; // Add .txt if not included
+        }
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             for (VideoGame game : backlog) {
@@ -179,6 +182,15 @@ public class Main {
     private static void loadFromFile(List<VideoGame> backlog, Scanner scanner) {
         System.out.println("Enter filename to load the backlog: ");
         String filename = scanner.nextLine();
+        if (!filename.endsWith(".txt")) {
+            filename += ".txt";  // add .txt if not included
+        }
+
+        File file = new File(filename);
+        if (!file.exists()) {
+            System.out.println("Error. File not found. Please check the filename and try again.");
+            return; // exit method if file does not exist
+        }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             backlog.clear();
@@ -194,6 +206,7 @@ public class Main {
                     backlog.add(new VideoGame(title, genre, releaseYear, console, completed));
                 }
             }
+            System.out.println("Games successfully loaded from " + filename);
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
