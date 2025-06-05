@@ -4,13 +4,15 @@ public class VideoGame {
     private String title;
     private String genre;
     private int releaseYear;
+    private int rating;
     private String console;
     private boolean isCompleted;
 
-    public VideoGame(String title, String genre, int releaseYear, String console, boolean isCompleted) {
+    public VideoGame(String title, String genre, int releaseYear, int rating, String console, boolean isCompleted) {
         this.title = title;
         this.genre = genre;
         this.releaseYear = releaseYear;
+        this.rating = rating;
         this.console = console;
         this.isCompleted = isCompleted;
     }
@@ -25,6 +27,15 @@ public class VideoGame {
 
     public int getReleaseYear() {
         return releaseYear;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating)
+    {
+        this.rating = rating;
     }
 
     public String getConsole() {
