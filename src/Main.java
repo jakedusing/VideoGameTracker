@@ -60,6 +60,10 @@ public class Main {
         int releaseYear = scanner.nextInt();
         scanner.nextLine(); // consume newline
 
+        System.out.print("Rate the game 1-10: ");
+        int rating = scanner.nextInt();
+        scanner.nextLine();
+
         System.out.print("Enter the console: ");
         String console = scanner.nextLine();
 
@@ -67,7 +71,7 @@ public class Main {
         boolean completed = scanner.nextBoolean();
         scanner.nextLine(); // consume newline
 
-        backlog.add(new VideoGame(title, genre, releaseYear, console, completed));
+        backlog.add(new VideoGame(title, genre, releaseYear, rating, console, completed));
         System.out.println("Game added successfully!");
     }
 
@@ -199,13 +203,14 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 5) {
+                if (parts.length == 6) {
                     String title = parts[0];
                     String genre = parts[1];
                     int releaseYear = Integer.parseInt(parts[2]);
-                    String console = parts[3];
-                    boolean completed = Boolean.parseBoolean(parts[4]);
-                    backlog.add(new VideoGame(title, genre, releaseYear, console, completed));
+                    int rating = Integer.parseInt(parts[3]);
+                    String console = parts[4];
+                    boolean completed = Boolean.parseBoolean(parts[5]);
+                    backlog.add(new VideoGame(title, genre, releaseYear, rating, console, completed));
                 }
             }
             System.out.println("Games successfully loaded from " + filename);
